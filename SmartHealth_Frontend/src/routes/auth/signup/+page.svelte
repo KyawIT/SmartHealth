@@ -1,9 +1,9 @@
-<div id="container" class="mt-5">
+<div class="mt-5">
   <form class="max-w-sm mx-auto">
     <div class="mb-5">
       <label
         for="base-input"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        class="block mb-2 text-sm font-medium text-gray-900"
         >Email</label
       >
       <input
@@ -16,7 +16,7 @@
     <div class="mb-5">
       <label
         for="base-input"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        class="block mb-2 text-sm font-medium text-gray-900"
         >Password</label
       >
       <input
@@ -29,7 +29,7 @@
     <div class="mb-5">
       <label
         for="base-input"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        class="block mb-2 text-sm font-medium text-gray-900"
         >SVN-Nr</label
       >
       <input
@@ -40,14 +40,11 @@
     </div>
     <button
       type="submit"
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >Register new account</button
+      class="mb-5 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >Register</button
     >
   </form>
 </div>
 
 <style>
-  :root {
-    background-color: #141e33;
-  }
 </style>
