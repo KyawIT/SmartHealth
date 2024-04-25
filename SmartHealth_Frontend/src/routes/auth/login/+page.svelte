@@ -1,4 +1,9 @@
 <div id="container" class="mt-5">
+  <h1
+    class="my-5 text-6xl font-black text-blue-600 dark:text-blue-600 text-center"
+  >
+    LOGIN
+  </h1>
   <form class="max-w-sm mx-auto">
     <div class="mb-5">
       <label for="base-input" class="block mb-2 text-sm font-medium"
@@ -31,7 +36,6 @@
         >Login</button
       >
       <p class="text-xl text-center">Authenticate with other Services</p>
-      
 
       <button
         type="button"

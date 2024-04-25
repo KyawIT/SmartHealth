@@ -1,10 +1,14 @@
 <div class="mt-5">
+  <h1
+    class="my-5 text-6xl font-black text-blue-600 dark:text-blue-600 text-center"
+  >
+    SIGNUP
+  </h1>
   <form class="max-w-sm mx-auto">
     <div class="mb-5">
       <label
         for="base-input"
-        class="block mb-2 text-sm font-medium text-gray-900"
-        >Email</label
+        class="block mb-2 text-sm font-medium text-gray-900">Email</label
       >
       <input
         type="text"
@@ -16,8 +20,7 @@
     <div class="mb-5">
       <label
         for="base-input"
-        class="block mb-2 text-sm font-medium text-gray-900"
-        >Password</label
+        class="block mb-2 text-sm font-medium text-gray-900">Password</label
       >
       <input
         type="password"
@@ -29,8 +32,7 @@
     <div class="mb-5">
       <label
         for="base-input"
-        class="block mb-2 text-sm font-medium text-gray-900"
-        >SVN-Nr</label
+        class="block mb-2 text-sm font-medium text-gray-900">SVN-Nr</label
       >
       <input
         type="text"
