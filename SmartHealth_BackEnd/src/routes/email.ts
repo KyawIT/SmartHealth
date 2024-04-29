@@ -33,7 +33,10 @@ function sendEmail(name:string, email:string, subject:string,  text: string){
         from: email,
         to: myEmail,
         subject: subject,
-        html:"From: " + email + '\n' + "Message: " + text
+        text:"From: " + email + '\n' + '\n' +
+        "Subject: " + subject + '\n' + '\n' +
+        "Customer Name: " + name + '\n' +'\n' +
+        "Message: " + '\n'+ '\n' + text
     };
 
     transporter.sendMail(message);
