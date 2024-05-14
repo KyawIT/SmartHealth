@@ -1,5 +1,4 @@
 import express from "express";
-import { User, users } from "./user";
 import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
