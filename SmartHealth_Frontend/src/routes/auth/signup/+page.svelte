@@ -1,4 +1,4 @@
-<div class="mt-5">
+<div id="container" class="mt-5">
   <h1
     class="my-5 text-6xl font-black text-blue-600 dark:text-blue-600 text-center"
   >
@@ -49,4 +49,7 @@
 </div>
 
 <style>
+  #container {
+      min-height: 100vh;
+  }
 </style>
