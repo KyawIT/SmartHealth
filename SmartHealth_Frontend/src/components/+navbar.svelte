@@ -1,47 +1,8 @@
-<script>
-  let toggled = false;
-
-  function changeBackground(){
-    document.body.style.backgroundColor = toggled ? "white": "black";
-  }
-
-  /**
-   * @param {string} id
-   */
-  function changeColor(id){
-    clearColor();
-    const link = document.getElementById(id);
-    link != null ? link.style.color = 'blue' : null;
-}
-
-export function clearColor(){
-  const currenturl = window.location.href;
-  let parts = currenturl.split("/");
-  let id = parts.at(parts.length-1);
-  console.log(parts);
-  console.log(id);
-  if(id == ""){
-    const link = document.getElementById("home");
-    link != null ? link.style.color = 'white' : null; 
-  }
-  else if(id == "signup"){
-    const link = document.getElementById("sign");
-    link != null ? link.style.color = 'white' : null; 
-  }
-  else if(id != undefined){
-    const link = document.getElementById(id);
-    link != null ? link.style.color = 'white' : null; 
-  }
-}
-</script>
-
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
   <div
     class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
   >
-    <a href="/"
-    on:click={() => changeColor('home')}
-    class="flex items-center space-x-3 rtl:space-x-reverse">
+    <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="/Logo6Corners/logo.svg" class="h-8" alt="Flowbite Logo" />
       <span
         class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"
@@ -80,8 +41,7 @@ export function clearColor(){
           <a
             href="/"
             id="home"
-            on:click={() => changeColor('home')}
-            class="block py-2 px-3 text-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-blue-700 md:hover:text-blue-700"
+            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Home</a
           >
         </li>
@@ -89,15 +49,14 @@ export function clearColor(){
           <a
             href="/about"
             id="about"
-            on:click={() => changeColor('about')}
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >About</a
           >
+        </li>
         <li>
           <a
             href="/contact"
             id="contact"
-            on:click={() => changeColor('contact')}
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Contact</a
           >
@@ -106,7 +65,6 @@ export function clearColor(){
           <a
             href="/auth/login"
             id="login"
-            on:click={() => changeColor('login')}
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Login</a
           >
@@ -115,28 +73,33 @@ export function clearColor(){
           <a
             href="/auth/signup"
             id="sign"
-            on:click={() => changeColor('sign')}
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Sign Up</a
           >
         </li>
         <li>
           <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox"  bind:checked={toggled} on:click={changeBackground} value="" class="sr-only peer">
-            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <input type="checkbox" value="" class="sr-only peer" />
+            <div
+              class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+            ></div>
             <span class="ms-3">
-              <img class="toggle" src="/frontend/toggle.png" alt="Picture" aria-hidden="true">
+              <img
+                class="toggle"
+                src="/frontend/toggle.png"
+                alt="Picture"
+                aria-hidden="true"
+              />
             </span>
           </label>
         </li>
-        
       </ul>
     </div>
   </div>
 </nav>
 
 <style>
-.toggle{
-  height: 2em;
-}
+  .toggle {
+    height: 2em;
+  }
 </style>
