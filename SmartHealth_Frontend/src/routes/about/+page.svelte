@@ -12,7 +12,7 @@
             <div class="p-5">
                 <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">What is SmartHealth exactly?</h5>
                 <p class="text-xl text-gray-700 dark:text-gray-400">
-                    Smart Health uses AI to diagnose illnesses based on symptoms and helps users find nearby healthcare providers, ensuring efficient access to healthcare information.
+                    Smart Health uses AI to diagnose illnesses based on symptoms and helps users find nearby healthcare providers, ensuring efficient access to healthcare information. Users provide their infos to get the best results possible.
                     </p>
             </div>
         </div>

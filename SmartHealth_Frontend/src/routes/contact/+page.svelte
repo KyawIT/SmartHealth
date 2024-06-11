@@ -31,7 +31,6 @@
     data.subject = "";
     data.message = "";
   }
-
 </script>
 
 <h1 class="my-5 text-6xl font-black text-blue-600 dark:text-blue-600 text-center">
