@@ -1,6 +1,3 @@
-<script>
-</script>
-
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
   <div
     class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
@@ -43,19 +40,23 @@
         <li>
           <a
             href="/"
-            class="block py-2 px-3 text-white rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:hover:text-blue-700"
+            id="home"
+            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Home</a
           >
         </li>
         <li>
           <a
             href="/about"
+            id="about"
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >About</a
           >
+        </li>
         <li>
           <a
             href="/contact"
+            id="contact"
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Contact</a
           >
@@ -63,6 +64,7 @@
         <li>
           <a
             href="/auth/login"
+            id="login"
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Login</a
           >
@@ -70,27 +72,34 @@
         <li>
           <a
             href="/auth/signup"
+            id="sign"
             class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >Sign Up</a
           >
         </li>
         <li>
           <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" class="sr-only peer">
-            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <input type="checkbox" value="" class="sr-only peer" />
+            <div
+              class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+            ></div>
             <span class="ms-3">
-              <img class="toggle" src="/frontend/toggle.png" alt="Picture" aria-hidden="true">
+              <img
+                class="toggle"
+                src="/frontend/toggle.png"
+                alt="Picture"
+                aria-hidden="true"
+              />
             </span>
           </label>
         </li>
-        
       </ul>
     </div>
   </div>
 </nav>
 
 <style>
-.toggle{
-  height: 2em;
-}
+  .toggle {
+    height: 2em;
+  }
 </style>

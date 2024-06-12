@@ -1,0 +1,12 @@
+{
+  "svg.preview.background": "editor",
+  "sqltools.useNodeRuntime": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "database": "${workspaceFolder:SmartHealth}/SmartHealth_BackEnd/db/users.db",
+      "name": "USERS"
+    }
+  ]
+}
