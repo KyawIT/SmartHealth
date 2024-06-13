@@ -18,8 +18,6 @@ export function clearColor(){
   const currenturl = window.location.href;
   let parts = currenturl.split("/");
   let id = parts.at(parts.length-1);
-  console.log(parts);
-  console.log(id);
   if(id == ""){
     const link = document.getElementById("home");
     link != null ? link.style.color = 'white' : null; 
