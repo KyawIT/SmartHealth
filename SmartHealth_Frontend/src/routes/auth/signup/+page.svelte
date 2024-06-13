@@ -1,16 +1,57 @@
+<script lang="ts">
+  let email = "";
+  let password = "";
+  let display_name = "";
+  let photo_url = "";
+
+  function handleSubmit(event: Event) {
+    event.preventDefault();
+    const data = {
+      email,
+      password,
+      display_name,
+      photo_url,
+    };
+
+    async function handleSubmit(event: Event) {
+      event.preventDefault();
+      const data = {
+        email,
+        password,
+        display_name,
+        photo_url,
+      };
+      try {
+        const response = await fetch("http://localhost:3000/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+</script>
+
 <div id="container">
   <h1
     class="py-5 text-6xl font-black text-blue-600 dark:text-blue-600 text-center"
   >
     SIGNUP
   </h1>
-  <form class="max-w-sm mx-auto">
+  <form class="max-w-sm mx-auto" on:submit={handleSubmit}>
     <div class="mb-5">
       <label
         for="base-input"
         class="block mb-2 text-sm font-medium text-gray-900">Email</label
       >
       <input
+        bind:value={email}
+        required
         type="text"
         id="base-input"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -22,7 +63,36 @@
         >Password</label
       >
       <input
+        bind:value={password}
+        required
         type="password"
+        id="base-input"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+
+    <div class="mb-5">
+      <label
+        for="base-input"
+        class="block mb-2 text-sm font-medium text-gray-900">Username</label
+      >
+      <input
+        bind:value={display_name}
+        required
+        type="text"
+        id="base-input"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+
+    <div class="mb-5">
+      <label
+        for="base-input"
+        class="block mb-2 text-sm font-medium text-gray-900">Image URL</label
+      >
+      <input
+        bind:value={photo_url}
+        type="text"
         id="base-input"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       />

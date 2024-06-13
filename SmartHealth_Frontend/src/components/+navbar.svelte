@@ -1,37 +1,31 @@
-
 <script>
-  let toggled = false;
+  import { onMount } from "svelte";
+  let auth = false;
+  let displayName = "";
+  let image = "";
 
-  function changeBackground(){
-    document.body.style.backgroundColor = toggled ? "white": "black";
-  }
-
-  /**
-   * @param {string} id
-   */
-  function changeColor(id){
-    clearColor();
-    const link = document.getElementById(id);
-    link != null ? link.style.color = 'blue' : null;
-}
-
-export function clearColor(){
-  const currenturl = window.location.href;
-  let parts = currenturl.split("/");
-  let id = parts.at(parts.length-1);
-  if(id == ""){
-    const link = document.getElementById("home");
-    link != null ? link.style.color = 'white' : null; 
-  }
-  else if(id == "signup"){
-    const link = document.getElementById("sign");
-    link != null ? link.style.color = 'white' : null; 
-  }
-  else if(id != undefined){
-    const link = document.getElementById(id);
-    link != null ? link.style.color = 'white' : null; 
-  }
-}
+  onMount(() => {
+    fetch("http://localhost:3000/auth/profile", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include credentials (cookies) in the request
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        displayName = data.displayName;
+        image = data.photos[0].value;
+        localStorage.setItem("displayName", data.displayName);
+        localStorage.setItem("image", data.photos[0].value);
+        localStorage.setItem("provider", data.provider);
+        auth = true;
+      })
+      .catch((error) => {
+        console.error("Error fetching profile:", error);
+      });
+  });
 </script>
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
@@ -97,22 +91,50 @@ export function clearColor(){
             >Contact</a
           >
         </li>
-        <li>
-          <a
-            href="/auth/login"
-            id="login"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            >Login</a
-          >
-        </li>
-        <li>
-          <a
-            href="/auth/signup"
-            id="sign"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            >Sign Up</a
-          >
-        </li>
+        {#if auth}
+          <li>
+            <a
+              href="http://localhost:3000/auth/google/callback"
+              id="login"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              >Signout</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              id="displayName"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              >{displayName}</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              id="image"
+              class="block text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              ><img src={image} width="30" /></a
+            >
+          </li>
+        {:else}
+          <li>
+            <a
+              href="/auth/login"
+              id="login"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              >Login</a
+            >
+          </li>
+          <li>
+            <a
+              href="/auth/signup"
+              id="sign"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              >Sign Up</a
+            >
+          </li>
+        {/if}
+
         <li>
           <label class="inline-flex items-center cursor-pointer">
             <input type="checkbox" value="" class="sr-only peer" />
