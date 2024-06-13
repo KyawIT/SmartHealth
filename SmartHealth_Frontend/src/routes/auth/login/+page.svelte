@@ -7,47 +7,51 @@
     window.location.href = "http://localhost:3000/auth/github";
   }
 </script>
-<div id="container" class="mt-5">
-  <div class="rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 w-1/2 m-auto pb-2">
-    <h1
-      class="my-5 text-6xl font-black text-blue-600 dark:text-blue-600 text-center"
-    >
-      LOGIN
-    </h1>
-    <form class="max-w-sm mx-auto">
-      <div class="mb-5">
-        <label for="base-input" class="block mb-2 text-sm font-medium text-white"
-          >Email</label
-        >
-        <input
-          type="text"
-          id="base-input"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
-          rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-      </div>
 
-      <div class="mb-5">
-        <label
-          for="base-input"
-          class="block mb-2 text-sm font-medium text-white">Password</label
-        >
-        <input
-          type="password"
-          id="base-input"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-      </div>
+<div id="container">
+  <h1
+    class="py-5 text-6xl font-black text-blue-600 dark:text-blue-600 text-center"
+  >
+    LOGIN
+  </h1>
+  <form class="max-w-sm mx-auto">
+    <div class="mb-5">
+      <label for="base-input" class="block mb-2 text-sm font-medium"
+        >Email</label
+      >
+      <input
+        type="text"
+        id="base-input"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
+        rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
 
+    <div class="mb-5">
+      <label
+        for="base-input"
+        class="block mb-2 text-sm font-medium text-gray-900">Password</label
+      >
+      <input
+        type="password"
+        id="base-input"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+
+    <div class="grid grid-cols-1 gap-y-5 mb-5">
       <div class="grid grid-cols-1 gap-y-5 mb-5">
         <button
           type="submit"
           class="inline-flex items-center justify-center w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
           >Login</button
         >
-        <p class="text-xl text-center  text-white">Authenticate with other Services</p>
+        <p class="text-xl text-center text-black">
+          Authenticate with other Services
+        </p>
 
-        <button on:click={() => redirectToGithubAuth()}
+        <button
+          on:click={() => redirectToGithubAuth()}
           type="button"
           class="inline-flex items-center justify-center w-full text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30"
         >
@@ -71,7 +75,7 @@
           type="button"
           class="inline-flex items-center justify-center w-full text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
           on:click={() => redirectToGoogleAuth()}
-          >
+        >
           <svg
             class="w-4 h-4 me-2"
             aria-hidden="true"
@@ -88,12 +92,13 @@
           Sign in with Google
         </button>
       </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>
 
 <style>
   #container {
-      min-height: 100vh;
+    min-height: 100vh;
+    background-color: #ffffff;
   }
 </style>

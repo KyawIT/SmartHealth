@@ -1,56 +1,68 @@
 import express from "express";
-import session from 'express-session';
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { Strategy as GitHubStrategy } from 'passport-github';
+import session from "express-session";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as GitHubStrategy } from "passport-github";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { DB } from "../../db/scripts/users_db";
 
 interface User {
+  id: string;
   email: string;
   password: string;
-  svn: string;
   displayName?: string;
-  photos?: string;
+  photoUrl?: any;
 }
 dotenv.config();
 const router = express.Router();
-router.use(session({
-  secret: process.env.SESSION_SECRET || 'default_session_secret',
-  resave: false,
-  saveUninitialized: false
-}));
+router.use(
+  session({
+    secret: process.env.SESSION_SECRET || "default_session_secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 router.use(passport.initialize());
 router.use(passport.session());
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID || '',
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-  callbackURL: process.env.GOOGLE_CALLBACK_URL || ''
-}, (accessToken, refreshToken, profile, done) => {
-  console.log('Google profile:', profile);
-  done(null, profile);
-}));
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || "",
+    },
+    (accessToken, refreshToken, profile, done) => {
+      console.log("Google profile:", profile);
+      done(null, profile);
+    }
+  )
+);
 
-passport.use(new GitHubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID || '',
-  clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-  callbackURL: process.env.GITHUB_CALLBACK_URL || ''
-}, (accessToken, refreshToken, profile, done) => {
-  console.log('Github profile:', profile);
-  done(null, profile);
-}));
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
+      callbackURL: process.env.GITHUB_CALLBACK_URL || "",
+    },
+    (accessToken, refreshToken, profile, done) => {
+      console.log("Github profile:", profile);
+      done(null, profile);
+    }
+  )
+);
 
 passport.serializeUser(function (user, done) {
   done(null, user);
 });
 
-passport.deserializeUser(function (user:any, done) {
+passport.deserializeUser(function (user: any, done) {
   done(null, user);
 });
-
 
 const ACCESS_TOKEN_SECRET: jwt.Secret = process.env
   .ACCESS_TOKEN_SECRET as string;
@@ -84,7 +96,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { email, password, svn } = req.body;
+  const { email, password } = req.body;
 
   const existingUser = users.find((u) => u.email === email);
   if (existingUser) {
@@ -93,9 +105,24 @@ router.post("/register", async (req, res) => {
 
   const hashedPassword = await hashPassword(password);
 
-  users.push({ email, password: hashedPassword, svn });
+  const db = await DB.createDBConnection();
+  const stmt = await db.prepare(
+    "insert into USERS (id, email, password, display_name, photo_url) values (?1, ?2, ?3, ?4, ?5)"
+  );
+  await stmt.bind({
+    1: "5",
+    2: email,
+    3: hashedPassword,
+    4: "display_name",
+    5: "photo_url",
+  });
+  const operationResult = await stmt.run();
+  await stmt.finalize();
+  await db.close();
 
-  const payload = { email, svn }; // Optional payload for registration token
+  //users.push({ email, password: hashedPassword });
+
+  const payload = { email }; // Optional payload for registration token
   const token = jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
   if (token) {
     res.json({ message: "User registered successfully", token });
@@ -104,17 +131,17 @@ router.post("/register", async (req, res) => {
   }
 });
 
-function verifyToken(req:any, res:any, next:any) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+function verifyToken(req: any, res: any, next: any) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Access token not provided' });
+    return res.status(401).json({ message: "Access token not provided" });
   }
 
-  jwt.verify(token, ACCESS_TOKEN_SECRET, (err:any, decoded:any) => {
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err: any, decoded: any) => {
     if (err) {
-      return res.status(403).json({ message: 'Invalid token' });
+      return res.status(403).json({ message: "Invalid token" });
     }
     req.user = decoded;
     next(); // Proceed to next middleware or route handler
@@ -122,25 +149,36 @@ function verifyToken(req:any, res:any, next:any) {
 }
 
 // GOOGLE
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('http://localhost:5173/');
-});
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("http://localhost:5173/");
+  }
+);
 
 // GITHUB
-router.get('/github', passport.authenticate('github'));
-router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('http://localhost:5173/');
-});
+router.get("/github", passport.authenticate("github"));
+router.get(
+  "/github/callback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("http://localhost:5173/");
+  }
+);
 
-router.get('/profile', (req, res) => {
-  if(req.isAuthenticated() && req.user){
+router.get("/profile", (req, res) => {
+  if (req.isAuthenticated() && req.user) {
     res.json(req.user);
   }
 });
 
-router.get('/', (req, res) => {
-  res.send('User Home Page');
+router.get("/", (req, res) => {
+  res.send("User Home Page");
 });
 
 export default router;
