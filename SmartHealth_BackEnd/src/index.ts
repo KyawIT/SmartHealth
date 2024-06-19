@@ -10,10 +10,13 @@ import emailRouter from "./routes/email";
 dotenv.config();
 
 const app = express();
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST'],
-}));
+const corsOptions = {
+  origin: "http://localhost:5173", // Replace with your actual frontend URL
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Allow cookies and authorization headers
+};
+app.use(cors(corsOptions));
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use("/auth", authRouter);

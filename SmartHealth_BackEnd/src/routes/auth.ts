@@ -9,12 +9,12 @@ import dotenv from "dotenv";
 import { DB } from "../../db/scripts/users_db";
 
 interface User {
-  id: string;
   email: string;
   password: string;
-  displayName?: string;
-  photoUrl?: any;
+  display_name: string;
+  photo_url: string;
 }
+
 dotenv.config();
 const router = express.Router();
 router.use(
@@ -67,8 +67,6 @@ passport.deserializeUser(function (user: any, done) {
 const ACCESS_TOKEN_SECRET: jwt.Secret = process.env
   .ACCESS_TOKEN_SECRET as string;
 
-const users: User[] = [];
-
 const hashPassword = async (password: string): Promise<string> => {
   const saltRounds = 10; // Adjust salt rounds as needed
   const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -77,7 +75,7 @@ const hashPassword = async (password: string): Promise<string> => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const user = users.find((u) => u.email === email);
+  const user: User | null = await GetUserByEmailFromDB(email);
   if (!user) {
     return res.status(401).json({ message: "Invalid username or password" });
   }
@@ -96,33 +94,24 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, display_name, photo_url } = req.body;
 
-  const existingUser = users.find((u) => u.email === email);
+  const existingUser: User | null = await GetUserByEmailFromDB(email);
   if (existingUser) {
     return res.status(400).json({ message: "Username already exists" });
   }
 
   const hashedPassword = await hashPassword(password);
+  const user: User = {
+    email,
+    password: hashedPassword,
+    display_name: display_name,
+    photo_url: photo_url,
+  };
 
-  const db = await DB.createDBConnection();
-  const stmt = await db.prepare(
-    "insert into USERS (id, email, password, display_name, photo_url) values (?1, ?2, ?3, ?4, ?5)"
-  );
-  await stmt.bind({
-    1: "5",
-    2: email,
-    3: hashedPassword,
-    4: "display_name",
-    5: "photo_url",
-  });
-  const operationResult = await stmt.run();
-  await stmt.finalize();
-  await db.close();
+  await InsertUserToDB(user);
 
-  //users.push({ email, password: hashedPassword });
-
-  const payload = { email }; // Optional payload for registration token
+  const payload = { user }; // Optional payload for registration token
   const token = jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
   if (token) {
     res.json({ message: "User registered successfully", token });
@@ -146,6 +135,71 @@ function verifyToken(req: any, res: any, next: any) {
     req.user = decoded;
     next(); // Proceed to next middleware or route handler
   });
+}
+
+function ensureAuthenticated(req: any, res: any, next: any) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
+
+async function InsertUserToDB(user: User) {
+  const db = await DB.createDBConnection();
+  try {
+    const stmt = await db.prepare(
+      "INSERT INTO USERS (email, password, display_name, photo_url) VALUES (?1, ?2, ?3, ?4)"
+    );
+    await stmt.bind({
+      1: user.email,
+      2: user.password,
+      3: user.display_name,
+      4: user.photo_url,
+    });
+    const operationResult = await stmt.run();
+    await stmt.finalize();
+    return operationResult; // Optionally return the result of the operation
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  } finally {
+    await db.close();
+  }
+}
+
+async function GetAllUsersFromDB(): Promise<User[]> {
+  const db = await DB.createDBConnection();
+  try {
+    const stmt = await db.prepare(
+      "SELECT email, password, display_name, photo_url FROM USERS"
+    );
+    const result = await stmt.all();
+    await stmt.finalize();
+    return result;
+  } catch (error) {
+    console.error("Error retrieving users:", error);
+    throw error;
+  } finally {
+    await db.close();
+  }
+}
+
+async function GetUserByEmailFromDB(email: string): Promise<User | null> {
+  const db = await DB.createDBConnection();
+  try {
+    const stmt = await db.prepare(
+      "SELECT email, password, display_name, photo_url FROM USERS WHERE email = ?"
+    );
+    await stmt.bind([email]);
+    const result = await stmt.get();
+    await stmt.finalize();
+    return result || null;
+  } catch (error) {
+    console.error("Error retrieving user by email:", error);
+    throw error;
+  } finally {
+    await db.close();
+  }
 }
 
 // GOOGLE

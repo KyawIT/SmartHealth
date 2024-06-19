@@ -14,13 +14,13 @@ export class DB {
     connection: Database
   ): Promise<void> {
     await connection.run(
-      `create table if not exists USERS(
-  id TEXT NOT NULL PRIMARY KEY,
+      `CREATE TABLE IF NOT EXISTS USERS (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT NOT NULL,
-    password TEXT,
-    display_name TEXT,
-    photo_url TEXT
-  ) strict`
+  password TEXT,
+  display_name TEXT,
+  photo_url TEXT
+) STRICT;`
     );
   }
 }
