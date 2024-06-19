@@ -19,7 +19,7 @@
 
 <div id="container">
   <h5
-    class="p-5 mb-5 text-6xl font-black text-white dark:text-white text-center"
+    class="p-5 mb-5 text-6xl font-black text-indigo-500 text-center"
   >
     SICK? SEARCH HERE
   </h5>
