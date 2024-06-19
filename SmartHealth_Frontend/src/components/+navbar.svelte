@@ -4,28 +4,49 @@
   let displayName = "";
   let image = "";
 
-  onMount(() => {
-    fetch("http://localhost:3000/auth/profile", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include credentials (cookies) in the request
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        displayName = data.displayName;
-        image = data.photos[0].value;
-        localStorage.setItem("displayName", data.displayName);
-        localStorage.setItem("image", data.photos[0].value);
-        localStorage.setItem("provider", data.provider);
-        auth = true;
-      })
-      .catch((error) => {
-        console.error("Error fetching profile:", error);
+  onMount(async () => {
+    let token = sessionStorage.getItem("token");
+    if (token) {
+      auth = true;
+      const response = await fetch("http://localhost:3000/auth/decodejwt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
       });
+
+      const userData = await response.json();
+      console.log(userData);
+
+      displayName = userData.user.display_name || userData.display_name;
+      image = userData.user.photo_url || userData.photo_url;
+    } else {
+      try {
+        const responseData = await fetch("http://localhost:3000/auth/profile", {
+          credentials: "include", // Important for including cookies
+        });
+        
+        if (responseData.ok) {
+          const data = await responseData.json();
+          console.log(data);
+          auth = true;
+          sessionStorage.setItem("token", data.token);
+          displayName = data.displayName || data.user.display_name;
+          image = data.photos ? data.photos[0].value : data.user.photo_url;
+        } else {
+          console.log("Unauthorized");
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    }
   });
+
+  function SignOut() {
+    sessionStorage.removeItem("token");
+    location.reload();
+  }
 </script>
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
@@ -94,10 +115,10 @@
         {#if auth}
           <li>
             <a
-              href="http://localhost:3000/auth/google/callback"
+              href=""
               id="login"
               class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >Signout</a
+              on:click={SignOut}>Signout</a
             >
           </li>
           <li>
@@ -112,7 +133,7 @@
             <a
               href="#"
               id="image"
-              class="block text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              class="w-8 h-8 rounded-full"
               ><img src={image} width="30" /></a
             >
           </li>

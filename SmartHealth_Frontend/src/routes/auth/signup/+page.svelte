@@ -1,19 +1,19 @@
 <script lang="ts">
+  import { redirect } from "@sveltejs/kit";
+
   let email = "";
   let password = "";
   let display_name = "";
   let photo_url = "";
 
-  function handleSubmit(event: Event) {
-    event.preventDefault();
-    const data = {
-      email,
-      password,
-      display_name,
-      photo_url,
-    };
+  interface ResponseData {
+    message: string;
+    token: string;
+  }
 
-    async function handleSubmit(event: Event) {
+
+
+  async function handleSubmit(event: Event) {
       event.preventDefault();
       const data = {
         email,
@@ -29,12 +29,15 @@
           },
           body: JSON.stringify(data),
         });
-        console.log(response);
+        const responseData:ResponseData = (await response.json());
+        if (responseData.message === "User registered successfully") {
+          sessionStorage.setItem("token", responseData.token);
+        }
+        window.location.href = "/";        
       } catch (error) {
         console.error(error);
       }
     }
-  }
 </script>
 
 <div id="container">

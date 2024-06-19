@@ -10,7 +10,7 @@ import { DB } from "../../db/scripts/users_db";
 
 interface User {
   email: string;
-  password: string;
+  password?: string;
   display_name: string;
   photo_url: string;
 }
@@ -80,12 +80,12 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ message: "Invalid username or password" });
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, user.password||"");
 
   if (!isMatch) {
     return res.status(401).json({ message: "Invalid username or password" });
   }
-  const payload = { email };
+  const payload = { user };
   const token = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
     expiresIn: "1h",
   });
@@ -144,7 +144,7 @@ function ensureAuthenticated(req: any, res: any, next: any) {
   res.redirect("/login");
 }
 
-async function InsertUserToDB(user: User) {
+async function InsertUserToDB(user: User):Promise<boolean> {
   const db = await DB.createDBConnection();
   try {
     const stmt = await db.prepare(
@@ -158,12 +158,12 @@ async function InsertUserToDB(user: User) {
     });
     const operationResult = await stmt.run();
     await stmt.finalize();
-    return operationResult; // Optionally return the result of the operation
   } catch (error) {
     console.error("Error inserting user:", error);
-    throw error;
+    return false;
   } finally {
     await db.close();
+    return true;
   }
 }
 
@@ -209,7 +209,7 @@ router.get(
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", { failureRedirect: "http://localhost:5173/" }),
   (req, res) => {
     res.redirect("http://localhost:5173/");
   }
@@ -227,12 +227,30 @@ router.get(
 
 router.get("/profile", (req, res) => {
   if (req.isAuthenticated() && req.user) {
-    res.json(req.user);
+    console.log("User is authenticated");
+    const user:any = req.user;
+    const userObj = {
+      email: user.emails ? user.emails[0].value : user.email,
+      display_name: user.displayName || user.display_name,
+      photo_url: user.photos ? user.photos[0].value : user.photo_url,
+      password: ""
+    };
+    
+    const token = jwt.sign(userObj, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+    
+    res.json({ user: userObj, token });
+  } else {
+    console.log("User is not authenticated");
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
 
-router.get("/", (req, res) => {
-  res.send("User Home Page");
+router.post("/decodejwt", (req, res) => {
+  res.send(jwt.decode(req.body.token));
+});
+
+router.get("/users", async(req, res) => {
+  res.send(await GetAllUsersFromDB());
 });
 
 export default router;

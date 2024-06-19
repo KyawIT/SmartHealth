@@ -1,10 +1,41 @@
-<script>
+<script lang="ts">
   function redirectToGoogleAuth() {
     window.location.href = "http://localhost:3000/auth/google";
   }
 
   function redirectToGithubAuth() {
     window.location.href = "http://localhost:3000/auth/github";
+  }
+  let email = "";
+  let password = "";
+  async function handleSubmit() {
+    const data = {
+      email,
+      password,
+    };
+    try {
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        sessionStorage.setItem('token', result.token);
+        window.location.href = 'http://localhost:5173/';
+        
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
+
   }
 </script>
 
@@ -20,6 +51,7 @@
         >Email</label
       >
       <input
+      bind:value={email}
         type="text"
         id="base-input"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
@@ -33,6 +65,7 @@
         class="block mb-2 text-sm font-medium text-gray-900">Password</label
       >
       <input
+        bind:value={password}
         type="password"
         id="base-input"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -42,6 +75,7 @@
     <div class="grid grid-cols-1 gap-y-5 mb-5">
       <div class="grid grid-cols-1 gap-y-5 mb-5">
         <button
+          on:click={() => handleSubmit()}
           type="submit"
           class="inline-flex items-center justify-center w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
           >Login</button
