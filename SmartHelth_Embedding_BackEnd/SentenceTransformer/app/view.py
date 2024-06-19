@@ -95,15 +95,18 @@ def find_similar_symptom():
     search_result = client.search(
         collection_name=collection_name,
         query_vector=input_embedding,
-        limit=1
+        limit=5
     )
 
     if search_result:
-        most_similar_sentence = search_result[0].payload["sentence"]
-        colon_index = most_similar_sentence.find(':')
-        if colon_index != -1:
-            most_similar_sentence = most_similar_sentence[:colon_index]
-        return jsonify({"Sickness": most_similar_sentence})
+        similar_sentences = []
+        for result in search_result:
+            most_similar_sentence = result.payload["sentence"]
+            colon_index = most_similar_sentence.find(':')
+            if colon_index != -1:
+                most_similar_sentence = most_similar_sentence[:colon_index]
+            similar_sentences.append(most_similar_sentence)
+        return jsonify({"Sicknesses": similar_sentences})
     else:
         return jsonify({"error": "No similar symptoms found"}), 404
 
