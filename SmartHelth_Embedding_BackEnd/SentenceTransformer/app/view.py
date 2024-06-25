@@ -1,77 +1,45 @@
-from sentence_transformers import SentenceTransformer, util
+from flask import Flask, request, jsonify
+from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, Distance, VectorParams
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+app = Flask(__name__)
 client = QdrantClient(url="http://localhost:6333")
-
 collection_name = "symptom_collection"
-collections = client.get_collections().collections
-collection_names = [collection.name for collection in collections]
+model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
 
-if collection_name not in collection_names:
+def initialize_collection():
+    collections = client.get_collections().collections
+    collection_names = [collection.name for collection in collections]
+
+    if collection_name in collection_names:
+        client.delete_collection(collection_name=collection_name)
+
     client.create_collection(
         collection_name=collection_name,
         vectors_config=VectorParams(size=768, distance=Distance.COSINE),
     )
 
-model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
-
-sentences = [
-    "Schwangerschaft: Periode verspätet, Alkohol, Müdigkeit, Kopfschmerzen",
-    "Periode: Frau, Unterleibschmerzen, Blutungen, Bauchschmerzen, Kopfschmerzen, Heißhunger Stimmungschwankungen",
-    "Grippe: Husten, Fieber, Muskelschmerzen, Kopfschmerzen, Müdigkeit",
-    "COVID-19: Husten, Fieber, Verlust des Geruchssinns, Atemnot, Müdigkeit",
-    "Migräne: Starke Kopfschmerzen, Übelkeit, Lichtempfindlichkeit, Geräuschempfindlichkeit, Sehstörungen",
+    sentences = [
+    "Erkältung: Schnupfen, Halsschmerzen, Husten, leichtes Fieber, Kopfschmerzen",
+    "Grippe: Husten, hohes Fieber, Muskelschmerzen, Kopfschmerzen, starke Müdigkeit",
+    "Magen-Darm-Infektion: Durchfall, Bauchschmerzen, Übelkeit, Erbrechen, leichtes Fieber",
     "Allergie: Niesen, Juckreiz, tränende Augen, laufende Nase, Hautausschlag",
-    "Depression: Anhaltende Traurigkeit, Verlust des Interesses, Müdigkeit, Schlafstörungen, Appetitlosigkeit",
+    "Depression: Anhaltende Traurigkeit, Verlust des Interesses an Aktivitäten, starke Müdigkeit, Schlafstörungen, Appetitlosigkeit",
     "Asthma: Atemnot, Husten, Keuchen, Engegefühl in der Brust, nächtliche Hustenanfälle",
-    "Diabetes: Häufiges Wasserlassen, extremer Durst, unerklärlicher Gewichtsverlust, Müdigkeit, verschwommenes Sehen",
-    "Bluthochdruck: Kopfschmerzen, Schwindel, Nasenbluten, Kurzatmigkeit, Brustschmerzen",
-    "Herzinfarkt: Brustschmerzen, Kurzatmigkeit, Schmerzen im Arm oder Kiefer, Übelkeit, Schwitzen",
-    "Schlaganfall: Plötzliche Schwäche, Verwirrtheit, Sehprobleme, Schwindel, plötzliche Kopfschmerzen",
+    "Blasenentzündung: Schmerzen beim Wasserlassen, häufiger Harndrang, Blut im Urin, Bauchschmerzen, leichtes Fieber",
+    "Migräne: Starke Kopfschmerzen, Übelkeit, Lichtempfindlichkeit, Geräuschempfindlichkeit, Sehstörungen",
+    "Bindehautentzündung: Rote, juckende Augen, vermehrter Tränenfluss, Augenbrennen, Ausfluss, Schwellung der Augenlider",
+    "Gelenkentzündung: Schmerzen im betroffenen Gelenk, Schwellung, Rötung, Wärme, eingeschränkte Beweglichkeit",
     "Gastritis: Magenschmerzen, Übelkeit, Erbrechen, Aufstoßen, Völlegefühl",
     "Nierensteine: Starke Rückenschmerzen, Blut im Urin, Übelkeit, häufiges Wasserlassen, Brennen beim Wasserlassen",
-    "Pneumonie: Husten mit Auswurf, Fieber, Schüttelfrost, Atemnot, Brustschmerzen",
-    "Arthritis: Gelenkschmerzen, Steifheit, Schwellung, Rötung, eingeschränkte Beweglichkeit",
-    "Zöliakie: Durchfall, Bauchschmerzen, Blähungen, Gewichtsverlust, Müdigkeit",
-    "Multiple Sklerose: Muskelschwäche, Sehstörungen, Taubheit oder Kribbeln, Koordinationsprobleme, Müdigkeit",
-    "Epilepsie: Krampfanfälle, Verwirrung, Bewusstlosigkeit, Angst, abnormales Verhalten",
-    "Morbus Crohn: Bauchschmerzen, Durchfall, Gewichtsverlust, Fieber, Müdigkeit",
-    "Gicht: Starke Gelenkschmerzen, Rötung, Schwellung, Hitzegefühl, Bewegungseinschränkung",
-    "Tuberkulose: Anhaltender Husten, Bluthusten, Gewichtsverlust, Fieber, Nachtschweiß",
-    "Parkinson: Zittern, langsame Bewegungen, Muskelsteifheit, Gleichgewichtsprobleme, Sprachveränderungen",
-    "Schilddrüsenunterfunktion: Müdigkeit, Gewichtszunahme, Kälteempfindlichkeit, Haarausfall, Verstopfung",
-    "Schilddrüsenüberfunktion: Gewichtsverlust, Nervosität, Schwitzen, Herzklopfen, Schlaflosigkeit",
-    "AIDS: Fieber, Nachtschweiß, Gewichtsverlust, geschwollene Lymphknoten, chronische Müdigkeit",
-    "Lungenembolie: Plötzliche Atemnot, Brustschmerzen, schneller Herzschlag, Husten mit Blut, Schwindel",
-    "Masern: Fieber, Hautausschlag, Husten, laufende Nase, rote, tränende Augen",
-    "Mumps: Geschwollene Speicheldrüsen, Fieber, Kopfschmerzen, Muskelschmerzen, Müdigkeit",
-    "Windpocken: Juckender Hautausschlag, Fieber, Müdigkeit, Kopfschmerzen, Appetitlosigkeit",
-    "Röteln: Leichtes Fieber, Hautausschlag, geschwollene Lymphknoten, Gelenkschmerzen, rote Augen",
-    "Keuchhusten: Starker Husten, Keuchen, Erbrechen nach Hustenanfällen, Müdigkeit, leichter Husten",
+    "Heuschnupfen: Niesen, laufende Nase, juckende Augen, tränende Augen, verstopfte Nase",
     "Bronchitis: Husten mit Auswurf, Brustschmerzen, Müdigkeit, Kurzatmigkeit, leichtes Fieber",
-    "Sinusitis: Gesichtsschmerzen, verstopfte Nase, Kopfschmerzen, gelber oder grüner Nasenausfluss, Husten",
-    "Otitis media (Mittelohrentzündung): Ohrenschmerzen, Fieber, Hörverlust, Ohrfluss, Schlafstörungen",
-    "Mandelentzündung (Tonsillitis): Halsschmerzen, Schluckbeschwerden, Fieber, geschwollene Mandeln, Kopfschmerzen",
-    "Hepatitis A: Müdigkeit, Bauchschmerzen, Übelkeit, Gelbsucht, dunkler Urin",
-    "Hepatitis B: Müdigkeit, Appetitlosigkeit, Bauchschmerzen, Gelbsucht, Gelenkschmerzen",
-    "Hepatitis C: Müdigkeit, Appetitlosigkeit, Bauchschmerzen, Gelbsucht, dunkler Urin",
-    "Magenschleimhautentzündung (Gastritis): Magenschmerzen, Übelkeit, Erbrechen, Völlegefühl, Sodbrennen",
-    "Magengeschwür: Magenschmerzen, Sodbrennen, Übelkeit, Appetitlosigkeit, Blähungen",
-    "Gallensteine: Starke Bauchschmerzen, Übelkeit, Erbrechen, Fieber, Gelbsucht",
-    "Reizdarmsyndrom (IBS): Bauchschmerzen, Blähungen, Durchfall, Verstopfung, Schleim im Stuhl",
-    "Zystitis (Blasenentzündung): Schmerzen beim Wasserlassen, häufiges Wasserlassen, Blut im Urin, Bauchschmerzen, Fieber",
-    "Prostatitis: Schmerzen im Unterleib, Schmerzen beim Wasserlassen, häufiger Harndrang, Fieber, Schmerzen im unteren Rücken",
-    "Anämie: Müdigkeit, Blässe, Kurzatmigkeit, Schwindel, Herzklopfen",
-    "Hypoglykämie: Zittern, Schwitzen, Verwirrung, Herzklopfen, Hunger",
-    "Hyperglykämie: Durst, häufiges Wasserlassen, Müdigkeit, verschwommenes Sehen, trockener Mund",
-    "Hypothyreose: Müdigkeit, Gewichtszunahme, Kälteempfindlichkeit, Haarausfall, Verstopfung",
-    "Hyperthyreose: Gewichtsverlust, Nervosität, Schwitzen, Herzklopfen, Schlaflosigkeit",
-    "Laktoseintoleranz: Bauchschmerzen, Blähungen, Durchfall, Übelkeit, Blähbauch",
-    "Zöliakie: Durchfall, Bauchschmerzen, Blähungen, Gewichtsverlust, Müdigkeit"
+    "Otitis media (Mittelohrentzündung): Ohrenschmerzen, Fieber, Hörverlust, Ohrfluss, Schlafstörungen"
 ]
+
 
 embeddings = model.encode(sentences)
 
@@ -99,20 +67,27 @@ def find_similar_symptom():
     search_result = client.search(
         collection_name=collection_name,
         query_vector=input_embedding,
-        limit=5
+        limit=4
     )
 
-    if search_result:
-        similar_sentences = []
-        for result in search_result:
+    threshold = 0.65
+    similar_sicknesses = []
+
+    for result in search_result:
+        if result.score >= threshold:
             most_similar_sentence = result.payload["sentence"]
             colon_index = most_similar_sentence.find(':')
             if colon_index != -1:
-                most_similar_sentence = most_similar_sentence[:colon_index]
-            similar_sentences.append(most_similar_sentence)
-        return jsonify({"Sicknesses": similar_sentences})
-    else:
-        return jsonify({"error": "No similar symptoms found"}), 404
+                most_similar_sickness = most_similar_sentence[:colon_index].strip()
+                if most_similar_sickness not in similar_sicknesses:
+                    similar_sicknesses.append(most_similar_sickness)
+                    if len(similar_sicknesses) >= 2:
+                        break
+
+    if len(similar_sicknesses) < 2:
+        similar_sicknesses.append("No further diseases found")
+
+    return jsonify({"Sicknesses": similar_sicknesses[:2]})
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -13,9 +13,7 @@ emailRouter.get("/email",(req,res) =>{
 })
 
 emailRouter.post("/sendEmail",(req,res)=>{
-    let content: {name:string, email:string, subject:string, message:string} = req.body;
-    console.log(content);
-    
+    let content: {name:string, email:string, subject:string, message:string} = req.body;    
     sendEmail(content.name,content.email,content.subject, content.message);
 })
 
@@ -38,7 +36,6 @@ function sendEmail(name:string, email:string, subject:string,  text: string){
         "Customer Name: " + name + '\n' +'\n' +
         "Message: " + '\n'+ '\n' + text
     };
-
     transporter.sendMail(message);
 }
 
