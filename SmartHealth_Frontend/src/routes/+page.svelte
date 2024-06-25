@@ -1,18 +1,35 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
+  let auth: string | null = null;
   let text = "";
-  let healthData = [];
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const response = await fetch(
-      `https://clinicaltables.nlm.nih.gov/api/conditions/v3/search?terms=${text}&df=term_icd9_code,primary_name`,
-    );
+  let healthData: any[] = [];
+
+  onMount(() => {
+    if (typeof window !== "undefined") {
+      auth = sessionStorage.getItem('token');
+    }
+    
+  });
+  async function handleSubmit() {
+    const objData = {
+      sentence: text
+    };
+    const response = await fetch('http://127.0.0.1:5000/find_similar_symptom/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(objData),
+      });
     const data = await response.json();
-    healthData = data;
+    healthData = data.Sicknesses;
+    console.log(healthData);
   }
 
-  function handleKeyPress(event) {
+  function handleKeyPress(event: KeyboardEvent) {
     if (event.key === "Enter" && !event.shiftKey) {
-      handleSubmit(event);
+      handleSubmit();
     }
   }
 </script>
@@ -33,19 +50,23 @@
       on:keydown={handleKeyPress}
     ></textarea>
   </form>
-  {#if healthData.length > 0}
-    <div class="flex flex-wrap justify-center mt-5">
-      {#each healthData[3] as item}
-        <div class="m-2 p-2 bg-gray-100 rounded-lg">
-          <a
-            target="_blank"
-            class="hover:underline"
-            href="https://www.google.com/search?q={item[1]}">{item[1]}</a
-          >
-        </div>
+  <div class="mt-5 text-center">
+    {#if healthData.length > 0}
+      <p class="text-center text-2xl text-blue-500">most likely </p>
+      <p class="text-7xl font-bold text-blue-600"><a href="https://www.google.com/search?q={healthData[0]}" target="_blank">{healthData[0]}</a></p>
+    {/if}
+    {#if auth && healthData.length > 0}
+    <div class="mt-5 "> 
+       <p class="text-center text-2xl text-blue-600">can be also </p>
+      {#each healthData.slice(1) as data}
+        <p class="text-4xl font-semibold text-black">{data}</p>
       {/each}
-    </div>
-  {/if}
+     </div>
+      {:else if !auth}
+      <p class="text-center text-2xl text-blue-600"><a class="underline hover:no-underline" href="/auth/login">LOGIN</a> for more!</p>
+    {/if}
+    
+  </div>
 </div>
 
 <style>

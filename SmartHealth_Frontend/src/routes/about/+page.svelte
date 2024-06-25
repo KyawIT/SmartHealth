@@ -25,7 +25,7 @@
         <div class="mt-5 h-auto">
             <p class="text-2xl font-medium text-white text-justify">
                 <span class="font-extrabold hover:italic">SmartHealth</span> uses
-                <span class="font-bold italic">AI</span> to diagnose
+                <span class="font-bold italic">Embeddings</span> to diagnose
                 <span class="font-bold italic">illnesses</span>
                 based on <span class="font-bold italic">symptoms</span>
                 and helps users find nearby

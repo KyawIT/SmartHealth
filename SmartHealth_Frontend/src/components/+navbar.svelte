@@ -19,8 +19,8 @@
       const userData = await response.json();
       console.log(userData);
 
-      displayName = userData.user.display_name || userData.display_name;
-      image = userData.user.photo_url || userData.photo_url;
+      displayName = userData.display_name || userData.user.display_name ;
+      image =  userData.photo_url || userData.user.photo_url;
     } else {
       try {
         const responseData = await fetch("http://localhost:3000/auth/profile", {

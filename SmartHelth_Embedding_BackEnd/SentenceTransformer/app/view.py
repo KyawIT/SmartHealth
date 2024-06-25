@@ -2,6 +2,7 @@ from sentence_transformers import SentenceTransformer, util
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, Distance, VectorParams
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 client = QdrantClient(url="http://localhost:6333")
 
@@ -18,6 +19,8 @@ if collection_name not in collection_names:
 model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
 
 sentences = [
+    "Schwangerschaft: Periode verspätet, Alkohol, Müdigkeit, Kopfschmerzen",
+    "Periode: Frau, Unterleibschmerzen, Blutungen, Bauchschmerzen, Kopfschmerzen, Heißhunger Stimmungschwankungen",
     "Grippe: Husten, Fieber, Muskelschmerzen, Kopfschmerzen, Müdigkeit",
     "COVID-19: Husten, Fieber, Verlust des Geruchssinns, Atemnot, Müdigkeit",
     "Migräne: Starke Kopfschmerzen, Übelkeit, Lichtempfindlichkeit, Geräuschempfindlichkeit, Sehstörungen",
@@ -82,6 +85,7 @@ client.upsert(
 )
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/find_similar_symptom/", methods=["POST"])
 def find_similar_symptom():
