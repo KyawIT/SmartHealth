@@ -35,7 +35,6 @@ def initialize_collection():
         "Migräne: Starke Kopfschmerzen, Übelkeit, Lichtempfindlichkeit, Geräuschempfindlichkeit, Sehstörungen",
         "Bindehautentzündung: Rote, juckende Augen, vermehrter Tränenfluss, Augenbrennen, Ausfluss, Schwellung der Augenlider",
         "Gelenkentzündung: Schmerzen im betroffenen Gelenk, Schwellung, Rötung, Wärme, eingeschränkte Beweglichkeit",
-        "Mandelentzündung: Halsschmerzen, Schluckbeschwerden, Fieber, geschwollene Mandeln, Kopfschmerzen",
         "Gastritis: Magenschmerzen, Übelkeit, Erbrechen, Aufstoßen, Völlegefühl",
         "Nierensteine: Starke Rückenschmerzen, Blut im Urin, Übelkeit, häufiges Wasserlassen, Brennen beim Wasserlassen",
         "Arthritis: Gelenkschmerzen, Steifheit, Schwellung, Rötung, eingeschränkte Beweglichkeit",
